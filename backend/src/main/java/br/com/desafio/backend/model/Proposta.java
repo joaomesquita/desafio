@@ -10,13 +10,13 @@ public class Proposta {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "fornecedor", nullable = false)
     private String fornecedor;
 
-    @Column(name = "nota", nullable = false)
+    @Column(name = "nota")
     private BigDecimal nota;
 
     @Column(name = "preco", nullable = false)
@@ -25,10 +25,11 @@ public class Proposta {
     @Column(name = "data_cadastro", nullable = false)
     private String dataCadastro;
 
-    @Column(name = "classificacao", nullable = false)
+    @Column(name = "classificacao")
     private Integer classificacao;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "LI_ID")
     private Licitacao licitacao;
 
     public Long getId() {
