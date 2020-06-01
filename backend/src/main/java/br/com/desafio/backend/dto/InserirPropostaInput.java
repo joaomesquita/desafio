@@ -7,7 +7,6 @@ public class InserirPropostaInput {
     private String fornecedor;
     private BigDecimal nota;
     private BigDecimal preco;
-    private String dataCadastro;
     private Long licitacaoId;
 
     public InserirPropostaInput() {
@@ -35,14 +34,6 @@ public class InserirPropostaInput {
 
     public void setPreco(BigDecimal preco) {
         this.preco = preco;
-    }
-
-    public String getDataCadastro() {
-        return dataCadastro;
-    }
-
-    public void setDataCadastro(String dataCadastro) {
-        this.dataCadastro = dataCadastro;
     }
 
     public Long getLicitacaoId() {
