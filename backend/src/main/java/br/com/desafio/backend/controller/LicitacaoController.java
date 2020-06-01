@@ -3,6 +3,7 @@ package br.com.desafio.backend.controller;
 import br.com.desafio.backend.dto.InserirLicitacaoInput;
 import br.com.desafio.backend.dto.LicitacaoDTO;
 import br.com.desafio.backend.dto.PropostaDTO;
+import br.com.desafio.backend.model.ClassificacaoEnum;
 import br.com.desafio.backend.model.Licitacao;
 import br.com.desafio.backend.model.Proposta;
 import br.com.desafio.backend.repository.LicitacaoRepository;
@@ -44,21 +45,40 @@ public class LicitacaoController {
         return licitacaoDTOS;
     }
 
-    private List<PropostaDTO> buscarPropostasPorLicitacao(Long licitacaoId) {
-        List<Proposta> propostas = propostaRepository.findAllByLicitacaoId(licitacaoId);
+    private List<PropostaDTO> buscarPropostasPorLicitacao(long licitacaoId) {
+        Licitacao licitacao = licitacaoRepository.findById(licitacaoId);
+        ClassificacaoEnum classificacaoEnum = null;
         List<PropostaDTO> propostaDTOS = new ArrayList<>();
+        
+        if (licitacao.getClassificacaoEnum() == classificacaoEnum.MENOR_PRECO) {
+            List<Proposta> propostas = propostaRepository.findAllByLicitacaoIdOrderByPrecoAscDataCadastroDesc(licitacaoId);
 
-        propostas.forEach((proposta -> {
-            PropostaDTO propostaDTO = new PropostaDTO();
-            propostaDTO.setPropostaId(proposta.getId());
-            propostaDTO.setFornecedor(proposta.getFornecedor());
-            propostaDTO.setNota(proposta.getNota());
-            propostaDTO.setPreco(proposta.getPreco());
-            propostaDTO.setDataCadastro(proposta.getDataCadastro());
-            propostaDTO.setClassificacao(proposta.getClassificacao());
+            propostas.forEach((proposta -> {
+                PropostaDTO propostaDTO = new PropostaDTO();
+                propostaDTO.setPropostaId(proposta.getId());
+                propostaDTO.setFornecedor(proposta.getFornecedor());
+                propostaDTO.setNota(proposta.getNota());
+                propostaDTO.setPreco(proposta.getPreco());
+                propostaDTO.setDataCadastro(proposta.getDataCadastro());
+                propostaDTO.setClassificacao(proposta.getClassificacao());
 
-            propostaDTOS.add(propostaDTO);
-        }));
+                propostaDTOS.add(propostaDTO);
+            }));
+        } else {
+            List<Proposta> propostas = propostaRepository.findAllByLicitacaoIdOrderByNotaDescPrecoDescDataCadastroDesc(licitacaoId);
+
+            propostas.forEach((proposta -> {
+                PropostaDTO propostaDTO = new PropostaDTO();
+                propostaDTO.setPropostaId(proposta.getId());
+                propostaDTO.setFornecedor(proposta.getFornecedor());
+                propostaDTO.setNota(proposta.getNota());
+                propostaDTO.setPreco(proposta.getPreco());
+                propostaDTO.setDataCadastro(proposta.getDataCadastro());
+                propostaDTO.setClassificacao(proposta.getClassificacao());
+
+                propostaDTOS.add(propostaDTO);
+            }));
+        }
 
         return propostaDTOS;
     }
@@ -91,11 +111,10 @@ public class LicitacaoController {
         licitacaoRepository.deleteById(licitacaoId);
     }
 
-    @PutMapping
-    public Licitacao atualizarLicitacao(@Valid @NotNull @RequestBody LicitacaoDTO licitacaoDTO) {
-        Licitacao licitacao = new Licitacao();
+    @PutMapping(path = "/{licitacaoId}")
+    public Licitacao atualizarLicitacao(@Valid @NotNull @PathVariable(value = "licitacaoId") long licitacaoId, @RequestBody LicitacaoDTO licitacaoDTO) {
+        Licitacao licitacao = licitacaoRepository.findById(licitacaoId);
 
-        licitacao.setId(licitacaoDTO.getLicitacaoId());
         licitacao.setDescricao(licitacaoDTO.getDescricao());
         licitacao.setClassificacaoEnum(licitacaoDTO.getClassificacaoEnum());
 
