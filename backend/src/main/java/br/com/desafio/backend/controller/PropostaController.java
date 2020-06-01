@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,16 +58,32 @@ public class PropostaController {
         proposta.setFornecedor(inserirPropostaInput.getFornecedor());
         proposta.setNota(inserirPropostaInput.getNota());
         proposta.setPreco(inserirPropostaInput.getPreco());
-        proposta.setDataCadastro(inserirPropostaInput.getDataCadastro());
-        proposta.setClassificacao(null);
+        proposta.setDataCadastro(buscarDataHoraAtual());
+        proposta.setClassificacao(buscarClassificacao(inserirPropostaInput.getLicitacaoId()));
         proposta.setLicitacao(licitacaoRepository.findById(inserirPropostaInput.getLicitacaoId()).orElse(null));
 
         return propostaRepository.save(proposta);
     }
 
-//TODO
-//    private Integer buscarClassificacao(Long licitacaoId) {
-//    }
+    private String buscarDataHoraAtual() {
+        LocalDateTime dataHora = LocalDateTime.now();
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/uuuu HH:mm");
+
+        return formato.format(dataHora);
+    }
+
+
+    private Integer buscarClassificacao(Long licitacaoId) {
+        List<Proposta> propostas = propostaRepository.findAllByLicitacaoId(licitacaoId);
+        Integer classificacao = 1;
+
+        for (Proposta proposta : propostas) {
+           classificacao = proposta.getClassificacao();
+           classificacao++;
+        }
+
+        return classificacao;
+    }
 
     @DeleteMapping(path = "/{propostaId}")
     public void removerProposta(@PathVariable(value = "propostaId") long propostaId) {
