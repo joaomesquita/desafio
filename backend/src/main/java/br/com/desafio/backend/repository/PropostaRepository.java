@@ -9,4 +9,8 @@ public interface PropostaRepository extends JpaRepository<Proposta, Long> {
     Proposta findById(long id);
 
     List<Proposta> findAllByLicitacaoId(Long licitacaoId);
+
+    List<Proposta> findAllByLicitacaoIdOrderByPrecoAscDataCadastroDesc(Long licitacaoId);
+
+    List<Proposta> findAllByLicitacaoIdOrderByNotaDescPrecoDescDataCadastroDesc(Long licitacaoId);
 }
