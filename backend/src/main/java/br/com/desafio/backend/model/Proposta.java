@@ -28,7 +28,7 @@ public class Proposta {
     @Column(name = "classificacao")
     private Integer classificacao;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "LI_ID")
     private Licitacao licitacao;
 
