@@ -89,4 +89,15 @@ public class PropostaController {
     public void removerProposta(@PathVariable(value = "propostaId") long propostaId) {
         propostaRepository.deleteById(propostaId);
     }
+
+    @PutMapping(path = "/{propostaId}")
+    public Proposta atualizarProposta(@Valid @NotNull @PathVariable(value = "propostaId") long propostaId, @RequestBody PropostaDTO propostaDTO) {
+        Proposta proposta = propostaRepository.findById(propostaId);
+
+        proposta.setFornecedor(propostaDTO.getFornecedor());
+        proposta.setNota(propostaDTO.getNota());
+        proposta.setPreco(propostaDTO.getPreco());
+
+        return propostaRepository.save(proposta);
+    }
 }
